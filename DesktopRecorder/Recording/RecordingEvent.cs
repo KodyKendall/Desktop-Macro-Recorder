@@ -8,19 +8,41 @@ using System.Drawing;
 
 namespace Recording
 {
-    class RecordingEvent
+    public class RecordingEvent
     {
         private Point eventPoint;
+        private int milliSecond;
 
+        public int TimeExecuted { get { return this.milliSecond; } }
 
-        public RecordingEvent(Point cursorPosition)
+        public RecordingEvent(Point cursorPosition, int milliSecond)
         {
-            this.eventPoint = cursorPosition;
+            if (cursorPosition != null)
+                this.eventPoint = cursorPosition;
+            else
+                throw new Exception("Mouse position cannot be null!");
         }
 
         public Point GetCursorPoint()
         {
             return this.eventPoint;
+        }
+
+        /// <summary>
+        /// Executes the events
+        /// </summary>
+        public void Execute()
+        {
+            //For now, we just need to move the Cursor to it's current location
+            MoveCursorToLocation();
+        }
+
+        /// <summary>
+        /// Moves the cursor to the updated position
+        /// </summary>
+        private void MoveCursorToLocation()
+        {
+            Cursor.Position = new Point(this.eventPoint.X, this.eventPoint.Y);
         }
 
     }

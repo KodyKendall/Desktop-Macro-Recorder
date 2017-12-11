@@ -39,7 +39,16 @@ namespace Recording
         /// <param name="rEvent"></param>
         public void AddFrame(int milliSecond, System.Drawing.Point cursorPoint)
         {
-            this.record.Add(milliSecond, new RecordingEvent(cursorPoint));
+            if (!record.ContainsKey(milliSecond))
+                this.record.Add(milliSecond, new RecordingEvent(cursorPoint, milliSecond));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public LinkedList<RecordingEvent> GetPlayback()
+        {
+            return new LinkedList<RecordingEvent>(record.Values);
         }
 
     }

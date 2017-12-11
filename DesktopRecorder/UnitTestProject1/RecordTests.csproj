@@ -50,11 +50,16 @@
   <ItemGroup>
     <Compile Include="RecordTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PlayTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ClassLibrary1\RecordPlayer.csproj">
+      <Project>{a3e062b2-1d39-40b6-80d8-ec705ed7e8b5}</Project>
+      <Name>RecordPlayer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Recording\Recording.csproj">
       <Project>{68ec9ff0-e8b5-4e27-9b23-dcb53d1b8453}</Project>
       <Name>Recording</Name>

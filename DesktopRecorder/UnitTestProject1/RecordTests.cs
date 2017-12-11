@@ -59,5 +59,21 @@ namespace UnitTestProject1
                 Assert.IsTrue(true);
             }
         }
+
+        [TestMethod]
+        public void TestGetElapsedMillisecond()
+        {
+            Recorder r = new Recorder();
+            r.StartRecording();
+            int previousElapsed = 0;
+
+            for (int index = 0; index < 1000000; index++)
+            {
+                System.Threading.Thread.Sleep(30);
+                int currentElapsed = r.GetElapsedMillisecond();
+                Assert.IsTrue(currentElapsed > previousElapsed);
+                previousElapsed = currentElapsed;
+            }
+        }
     }
 }

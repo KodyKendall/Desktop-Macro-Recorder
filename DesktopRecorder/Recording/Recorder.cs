@@ -65,10 +65,13 @@ namespace Recording
         private void RecordFrame()
         {
             this.recording.AddFrame(GetElapsedMillisecond(), Cursor.Position);
-            //return null;
         }
 
-        private int GetElapsedMillisecond()
+        /// <summary>
+        /// Get's the elapsed milliseconds since the recorder started
+        /// </summary>
+        /// <returns></returns>
+        public int GetElapsedMillisecond()
         {
             return DateTime.Now.Millisecond - this.startTime;
         }

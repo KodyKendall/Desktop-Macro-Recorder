@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Playback.cs" />
     <Compile Include="Record.cs" />
     <Compile Include="Recorder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

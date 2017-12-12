@@ -11,11 +11,8 @@ namespace Recording
     public class RecordingEvent
     {
         private Point eventPoint;
-        private int milliSecond;
 
-        public int TimeExecuted { get { return this.milliSecond; } }
-
-        public RecordingEvent(Point cursorPosition, int milliSecond)
+        public RecordingEvent(Point cursorPosition)
         {
             if (cursorPosition != null)
                 this.eventPoint = cursorPosition;

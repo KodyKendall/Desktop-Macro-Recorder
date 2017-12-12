@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Threading;
 
 namespace Recording
 {
@@ -11,6 +13,9 @@ namespace Recording
     {
         private Dictionary<int, RecordingEvent> record;
         private int recordLength = 0;
+        private int frameLength = 0;
+
+        private DateTime dateRecorded;
         
         public int Length
         {
@@ -18,8 +23,14 @@ namespace Recording
             set { this.recordLength = value; }
         }
 
-        public Record()
+        /// <summary>
+        /// Create a record with frameLengthTime milliseconds per frame
+        /// </summary>
+        /// <param name="frameLength"></param>
+        public Record(int frameLengthTime, DateTime dateRecorded)
         {
+            this.dateRecorded = dateRecorded;
+            this.frameLength = frameLengthTime;
             record = new Dictionary<int, RecordingEvent>();
         }
 
@@ -33,23 +44,60 @@ namespace Recording
         }
 
         /// <summary>
+        /// Returns the total time of this recording in milliseconds
+        /// </summary>
+        /// <returns></returns>
+        public int MillisecondsLong()
+        {
+            return this.record.Count * frameLength;
+        }
+
+        /// <summary>
+        /// Return the total time of this recording in seconds
+        /// </summary>
+        /// <returns></returns>
+        public int SecondsLong()
+        {
+            return MillisecondsLong() / 1000;
+        }
+
+        /// <summary>
+        /// Return the total time of this record in minutes
+        /// </summary>
+        /// <returns></returns>
+        public double MinutesLong()
+        {
+            return SecondsLong() / 60;
+        }
+
+        /// <summary>
         /// Adds a frame to this record
         /// </summary>
         /// <param name="milliSecond"></param>
         /// <param name="rEvent"></param>
-        public void AddFrame(int milliSecond, System.Drawing.Point cursorPoint)
+        public void AddFrame(System.Drawing.Point cursorPoint)
         {
-            if (!record.ContainsKey(milliSecond))
-                this.record.Add(milliSecond, new RecordingEvent(cursorPoint, milliSecond));
+            this.record.Add(record.Count+1, new RecordingEvent(cursorPoint));
         }
 
         /// <summary>
-        /// 
+        /// Play back the recorded user events
         /// </summary>
-        public LinkedList<RecordingEvent> GetPlayback()
+        /// <returns>The milliseconds of the record</returns>
+        public long Play()
         {
-            return new LinkedList<RecordingEvent>(record.Values);
-        }
+            Stopwatch s = new Stopwatch();
 
+            s.Start();
+            foreach (RecordingEvent frame in record.Values)
+            {
+                frame.Execute();
+                System.Threading.Thread.Sleep(this.frameLength);
+            }
+            s.Stop();
+
+            return s.ElapsedMilliseconds;
+
+        }
     }
 }

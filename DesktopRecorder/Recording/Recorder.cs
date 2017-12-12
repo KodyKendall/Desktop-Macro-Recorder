@@ -11,35 +11,31 @@ namespace Recording
 {
     public class Recorder
     {
-        System.Timers.Timer recordTimer;
         private int recordingLength;
 
         //This is the essential part of our recording.
-        //Dictionary<int, RecordingEvent> recording = new Dictionary<int, RecordingEvent>();
         private bool recordingInSession;
-        private int startTime;
-        private int endTime;
+        private int frameLength;
 
         private Record recording;
 
         /// <summary>
         /// Recorder has the capability to record user input and return the record object. 
         /// </summary>
-        public Recorder()
+        public Recorder(int frameLength = 20)
         {
             recordingInSession = false;
-            recordTimer = new System.Timers.Timer();
+            this.frameLength = frameLength;
         }
 
         public void StartRecording()
         {
             if (!recordingInSession)
             {
-                this.recording = new Record();
+                this.recording = new Record(this.frameLength, DateTime.Now);
                 this.recordingInSession = true;
                 Thread recordThread = new Thread(() => RecordUserMovement());
                 recordThread.Start();
-                //RecordUserMovement();
             }
             else
             {
@@ -48,32 +44,18 @@ namespace Recording
         }
 
 
-        private void RecordUserMovement(int frameLength= 20)
+        private void RecordUserMovement(int frameLength = 20)
         {
-            startTime = DateTime.Now.Millisecond;
-
             while (this.recordingInSession)
             {
                 RecordFrame();
                 Thread.Sleep(frameLength);
             }
-            //recordTimer.Interval = 20; //Record snapshot every 20 seconds. 
-            //recordTimer.Elapsed += RecordFrame();
-            //recordTimer.Start();
         }
 
         private void RecordFrame()
         {
-            this.recording.AddFrame(GetElapsedMillisecond(), Cursor.Position);
-        }
-
-        /// <summary>
-        /// Get's the elapsed milliseconds since the recorder started
-        /// </summary>
-        /// <returns></returns>
-        public int GetElapsedMillisecond()
-        {
-            return DateTime.Now.Millisecond - this.startTime;
+            this.recording.AddFrame(Cursor.Position);
         }
 
         /// <summary>
@@ -84,11 +66,7 @@ namespace Recording
             if (recordingInSession)
             {
                 //Should stop the recordFrame from being triggered by EventElapsedArgs
-                recordTimer.Stop();
-
-                this.endTime = DateTime.Now.Millisecond;
-                recordingLength = this.endTime - this.startTime;
-                recording.Length = this.recordingLength;
+                this.recordingInSession = false;
                 return this.recording;
             }
             else

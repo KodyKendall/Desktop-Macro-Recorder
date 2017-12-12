@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Recording;
+using System.Threading;
 
 namespace UnitTestProject1
 {
@@ -65,15 +66,11 @@ namespace UnitTestProject1
         {
             Recorder r = new Recorder();
             r.StartRecording();
-            int previousElapsed = 0;
+            Thread.Sleep(500); //Sleep for 500 milliseconds
+            Record testRecord = r.StopRecording();
 
-            for (int index = 0; index < 1000000; index++)
-            {
-                System.Threading.Thread.Sleep(30);
-                int currentElapsed = r.GetElapsedMillisecond();
-                Assert.IsTrue(currentElapsed > previousElapsed);
-                previousElapsed = currentElapsed;
-            }
+            Assert.IsTrue(testRecord.SecondsLong() == 0);
+            Assert.IsTrue(testRecord.MillisecondsLong() >= 500);
         }
     }
 }

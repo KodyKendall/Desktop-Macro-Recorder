@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Recording;
 using System.Threading;
-using RecordPlayer;
+using System.Diagnostics;
 
 namespace UnitTestProject1
 {
@@ -14,18 +14,14 @@ namespace UnitTestProject1
         {
             Recorder r = new Recorder();
             r.StartRecording();
-            Thread.Sleep(6000); //Record 3 frames
-            Record record = r.StopRecording();
-            Assert.IsTrue(record.FrameCount() >= 2);
+            Thread.Sleep(3000); //Record for 6 seconds
+            Record recording = r.StopRecording();
 
-
-            RecordPlayer.RecordPlayer player = new RecordPlayer.RecordPlayer();
-            int timePlaybackStarted = DateTime.Now.Millisecond;
-            player.PlayRecord(record);
-            int timePlaybackEnded = DateTime.Now.Millisecond;
+            Assert.IsTrue(recording.FrameCount() >= 2);
+            Thread.Sleep(5000); //Give the playback thread enough time to play back..
 
             //Play back should have been AT LEAST longer than 5 seconds, since recording length was 6. 
-            Assert.IsTrue(timePlaybackEnded - timePlaybackStarted > 5000);
+            Assert.IsTrue(recording.MillisecondsLong() >= 2500);
         }
     }
 }

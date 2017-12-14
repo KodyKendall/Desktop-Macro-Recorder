@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Recording;
 using System.Threading;
 
-namespace UnitTestProject1
+namespace MouseToolTests
 {
     [TestClass]
     public class RecordTests
@@ -24,6 +24,7 @@ namespace UnitTestProject1
         {
             Recorder r = new Recorder();
             r.StartRecording();
+            Thread.Sleep(20);
             Record record = r.StopRecording();
             
             //Should have recorded at least one frame. 

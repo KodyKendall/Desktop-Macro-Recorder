@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
 using System.Threading;
+using System.Windows.Input;
 
 namespace Recording
 {
@@ -48,18 +49,25 @@ namespace Recording
         {
             while (this.recordingInSession)
             {
-                RecordFrame();
-                Thread.Sleep(frameLength);
+                RecordSingleFrame();
+                Thread.Sleep(frameLength);//Get frame snapshot every frameLength milliseconds
             }
         }
 
-        private void RecordFrame()
+
+        //Records a single frame
+        private void RecordSingleFrame()
         {
+            if (MouseLeftDown())
+            {
+                this.recording.AddFrame(Cursor.Position, MouseButtons.Left);
+            }
+
             this.recording.AddFrame(Cursor.Position);
         }
 
         /// <summary>
-        /// Stops recording a session that's in place and returns the Record object. 
+        /// Stops recording a session that's in place and returns the Record. 
         /// </summary>
         public Record StopRecording()
         {
@@ -83,5 +91,12 @@ namespace Recording
         {
             return this.recordingInSession;
         }
+
+        #region Checks for buttons being held down: 
+        private bool MouseLeftDown()
+        {
+            return (Control.MouseButtons == MouseButtons.Left);
+        }
+        #endregion 
     }
 }

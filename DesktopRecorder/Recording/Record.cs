@@ -5,19 +5,44 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Recording
 {
 
     public class Record
     {
+        //int is the frame's order. 1 = first frame in recording. 
         private Dictionary<int, RecordingEvent> record;
         private int recordLength = 0;
         private int frameLength = 0;
 
+        #region Mouse stats for record
+        private int numLeftClicks = 0;
+        private int numRightClicks = 0;
+
+        /// <summary>
+        /// The number of left clicks in this record
+        /// </summary>
+        public int NumLeftClicks
+        {
+            get { return this.numLeftClicks; }
+        }
+
+        /// <summary>
+        /// The number of right clicks in this record
+        /// </summary>
+        public int NumRightCLicks
+
+        {
+            get { return this.numRightClicks; }
+        }
+
+        #endregion
+
         private DateTime dateRecorded;
         
-        public int Length
+        public int NumFrames
         {
             get { return this.recordLength; }
             set { this.recordLength = value; }
@@ -77,7 +102,21 @@ namespace Recording
         /// <param name="rEvent"></param>
         public void AddFrame(System.Drawing.Point cursorPoint)
         {
-            this.record.Add(record.Count+1, new RecordingEvent(cursorPoint));
+            this.record.Add(record.Count + 1, new RecordingEvent(cursorPoint));
+        }
+
+        /// <summary>
+        /// Add a frame with a mouseButton.
+        /// </summary>
+        /// <param name="cursorPoint"></param>
+        /// <param name="buttons"></param>
+        public void AddFrame(System.Drawing.Point cursorPoint, MouseButtons button)
+        {
+            this.record.Add(record.Count + 1, new RecordingEvent(cursorPoint,button));
+            if (button == MouseButtons.Left)
+                this.numLeftClicks++;
+            else if (button == MouseButtons.Right)
+                this.numRightClicks++;
         }
 
         /// <summary>
@@ -97,7 +136,6 @@ namespace Recording
             s.Stop();
 
             return s.ElapsedMilliseconds;
-
         }
     }
 }

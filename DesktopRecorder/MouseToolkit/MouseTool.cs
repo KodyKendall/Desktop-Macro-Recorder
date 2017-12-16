@@ -7,47 +7,37 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Diagnostics;
+using Gma.System.MouseKeyHook;
 
 namespace MouseToolkit
 {
     public class MouseTool
     {
-        int numLeftClicks;
-        int numRightClicks;
+
+        int numLeftClicks = 0;
+        int numRightClicks = 0;
+
+        //To listen for mouse events
+
+        int temporaryNumClicks = 0;
 
         /// <summary>
-        /// Simulate a mouse click wherever the current mouse's location is. 
+        /// Simulate a mouse click wherever the current mouse's location is
+        /// depending on the mouseButton state. 
         /// </summary>
-        public void DoClick(MouseButtons mouseButton)
+        public void SimulateMouseClick(MouseButtons mouseButton)
         {
             switch (mouseButton)
             {
                 case (MouseButtons.Left):
-                {
                     DoLeftMouseClick();
+                    numLeftClicks++;
                     break;
-                }
                 case (MouseButtons.Right):
-                {
-                   throw new NotImplementedException();
-                }
+                    DoRightMouseClick();
+                    numRightClicks++;
+                    break;
             }
-        }
-
-        /// <summary>
-        /// After starting this method, MouseTool will keep track of ALL clicks
-        /// for the amount of millisecondsToWait. THIS DOES NOT run on it's own thread.
-        /// </summary>
-        public int ListenForMouseClicks(int millisecondsToWait = 5000)
-        {
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            while (s.ElapsedMilliseconds < millisecondsToWait)
-            {
-                //Listen..? 
-                //TODO: Keep track of mouse clicks during this period..
-            }
-            return -1;
         }
 
         /// <summary>
@@ -65,13 +55,21 @@ namespace MouseToolkit
             Cursor.Position = newPoint;
         }
 
+        /// <summary>
+        /// Get the total number of left clicks this mouse tool has simulated. 
+        /// </summary>
+        /// <returns></returns>
+        public int TotalNumLeftClicks()
+        {
+            return this.numLeftClicks;
+        }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
+        private static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
         //Mouse actions
         private const int MOUSEEVENTF_LEFTDOWN = 0x02;
         private const int MOUSEEVENTF_LEFTUP = 0x04;
-        private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
+        private const int MOUSEEVENTF_RIGHTDOWN = 0x08;  
         private const int MOUSEEVENTF_RIGHTUP = 0x10;
 
         private void DoLeftMouseClick()

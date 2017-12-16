@@ -86,7 +86,7 @@ namespace Recording
         /// <summary>
         /// If this Recorder is currently recording, return true. Otherwise, false. 
         /// </summary>
-        /// <returns></returns>
+        /// <returns></returns> 
         public bool IsRecording()
         {
             return this.recordingInSession;

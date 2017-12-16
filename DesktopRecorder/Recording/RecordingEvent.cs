@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using MouseToolkit;
 using System.Runtime.InteropServices;
 
 namespace Recording
@@ -47,8 +48,11 @@ namespace Recording
         public void Execute()
         {
             //For now, we just need to move the Cursor to it's current location
-            MoveCursorToLocation(this.mouseLocation);
-            SimulateMouseButton(this.mouseButtonClick);
+            MouseTool mouseTool = new MouseTool();
+
+            mouseTool.MoveMouseCursor(this.mouseLocation);
+            if (this.mouseButtonClick != null)//If we had a mouse event, we need to simulate it. 
+                mouseTool.SimulateMouseClick((MouseButtons)this.mouseButtonClick);
         }
 
         /// <summary>
@@ -63,7 +67,7 @@ namespace Recording
         /// Simulates a mouse event based on this.mouseButtonClick's state. 
         /// If mouseButtonClick is null, no event will happen. 
         /// </summary>
-        private void SimulateMouseButton(MouseButtons? buttonToClick)
+        private void SimulateMouseClick(MouseButtons? buttonToClick)
         {
             //Only simulate if this RecordingEvent has a non-null mouseEvent.
             //This should be tracked by the clickEvent boolean. 

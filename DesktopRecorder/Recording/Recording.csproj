@@ -47,5 +47,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecordingEvent.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MouseToolkit\MouseToolkit.csproj">
+      <Project>{d446f0e7-4fa7-496c-b7a3-b58a57c87ee6}</Project>
+      <Name>MouseToolkit</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

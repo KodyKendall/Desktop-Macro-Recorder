@@ -9,9 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recording", "Recording\Reco
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecordTests", "UnitTestProject1\RecordTests.csproj", "{6F02B2A5-166E-470B-B167-A50A73B5075F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecordPlayer", "ClassLibrary1\RecordPlayer.csproj", "{A3E062B2-1D39-40B6-80D8-EC705ED7E8B5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MouseToolkit", "MouseToolkit\MouseToolkit.csproj", "{D446F0E7-4FA7-496C-B7A3-B58A57C87EE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecordingController", "RecordingController\RecordingController.csproj", "{73D056E9-33AE-4235-A554-D317D8A900F7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{E7AD9EC9-3DF1-49B1-AF00-6E6C46E53286}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,14 +33,14 @@ Global
 		{6F02B2A5-166E-470B-B167-A50A73B5075F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F02B2A5-166E-470B-B167-A50A73B5075F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F02B2A5-166E-470B-B167-A50A73B5075F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A3E062B2-1D39-40B6-80D8-EC705ED7E8B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A3E062B2-1D39-40B6-80D8-EC705ED7E8B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A3E062B2-1D39-40B6-80D8-EC705ED7E8B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A3E062B2-1D39-40B6-80D8-EC705ED7E8B5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D446F0E7-4FA7-496C-B7A3-B58A57C87EE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D446F0E7-4FA7-496C-B7A3-B58A57C87EE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D446F0E7-4FA7-496C-B7A3-B58A57C87EE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D446F0E7-4FA7-496C-B7A3-B58A57C87EE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73D056E9-33AE-4235-A554-D317D8A900F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73D056E9-33AE-4235-A554-D317D8A900F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73D056E9-33AE-4235-A554-D317D8A900F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73D056E9-33AE-4235-A554-D317D8A900F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

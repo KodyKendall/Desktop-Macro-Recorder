@@ -73,5 +73,36 @@ namespace MouseToolTests
             Assert.IsTrue(testRecord.SecondsLong() == 0);
             Assert.IsTrue(testRecord.MillisecondsLong() >= 500);
         }
+
+        [TestMethod]
+        public void TestRecorderAlreadyRecordingException()
+        {
+            Recorder r = new Recorder();
+            r.StartRecording();
+            try
+            {
+                r.StartRecording();
+                Assert.Fail();
+            }
+            catch (RecorderAlreadyRecordingException)
+            {
+                Assert.IsTrue(true);
+            }
+        }
+
+        [TestMethod]
+        public void TestRecorderNotRecordingException()
+        {
+            Recorder r = new Recorder();
+            try
+            {
+                r.StopRecording();
+                Assert.Fail();
+            }
+            catch (RecorderNotRecordingException)
+            {
+                Assert.IsTrue(true);
+            }
+        }
     }
 }

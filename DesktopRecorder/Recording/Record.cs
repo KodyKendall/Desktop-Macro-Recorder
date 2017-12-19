@@ -13,13 +13,36 @@ namespace Recording
     public class Record
     {
         //int is the frame's order. 1 = first frame in recording. 
-        private Dictionary<int, RecordingEvent> record;
+        //public Dictionary<int, RecordingEvent> record;
+        public List<Frame> record;
         private int recordLength = 0;
         private int frameLength = 0;
+        private bool playbackInProgress = false;
 
         #region Mouse stats for record
         private int numLeftClicks = 0;
         private int numRightClicks = 0;
+
+
+        public double LengthInSeconds
+        {
+            get { return SecondsLong(); }
+
+            //Do nothing (here for xml serialization)
+            set
+            { 
+            }
+        }
+
+        /// <summary>
+        /// The length in milliseconds each frame represents.
+        /// Default is 15. 
+        /// </summary>
+        public int FrameDuration
+        {
+            get { return this.frameLength; }
+            set { this.frameLength = value; }
+        }
 
         /// <summary>
         /// The number of left clicks in this record
@@ -49,14 +72,35 @@ namespace Recording
         }
 
         /// <summary>
+        /// If the record is currently playing, this playback will be set to true. 
+        /// To stop a record from currently playing, set this to false. 
+        /// </summary>
+        public bool PlaybackInProgress
+        {
+            get { return this.playbackInProgress; }
+            set { this.playbackInProgress = value; }
+        }
+
+        /// <summary>
         /// Create a record with frameLengthTime milliseconds per frame
         /// </summary>
         /// <param name="frameLength"></param>
-        public Record(int frameLengthTime, DateTime dateRecorded)
+        public Record(int frameLengthTime = 15)
         {
-            this.dateRecorded = dateRecorded;
+            this.dateRecorded = DateTime.Now;
             this.frameLength = frameLengthTime;
-            record = new Dictionary<int, RecordingEvent>();
+            record = new List<Frame>();
+        }
+
+        /// <summary>
+        /// Create a record.
+        /// 
+        /// </summary>
+        public Record()
+        {
+            this.dateRecorded = DateTime.Now;
+            this.frameLength = 15; //Default fvalue
+            record = new List<Frame>();
         }
 
         /// <summary>
@@ -72,7 +116,7 @@ namespace Recording
         /// Returns the total time of this recording in milliseconds
         /// </summary>
         /// <returns></returns>
-        public int MillisecondsLong()
+        public double MillisecondsLong()
         {
             return this.record.Count * frameLength;
         }
@@ -81,7 +125,7 @@ namespace Recording
         /// Return the total time of this recording in seconds
         /// </summary>
         /// <returns></returns>
-        public int SecondsLong()
+        public double SecondsLong()
         {
             return MillisecondsLong() / 1000;
         }
@@ -102,7 +146,7 @@ namespace Recording
         /// <param name="rEvent"></param>
         public void AddFrame(System.Drawing.Point cursorPoint)
         {
-            this.record.Add(record.Count + 1, new RecordingEvent(cursorPoint));
+            this.record.Add(new Frame(record.Count + 1, new RecordingEvent(cursorPoint)));
         }
 
         /// <summary>
@@ -112,7 +156,7 @@ namespace Recording
         /// <param name="buttons"></param>
         public void AddFrame(System.Drawing.Point cursorPoint, MouseButtons button)
         {
-            this.record.Add(record.Count + 1, new RecordingEvent(cursorPoint,button));
+            this.record.Add(new Frame(record.Count + 1, new RecordingEvent(cursorPoint,button)));
             if (button == MouseButtons.Left)
                 this.numLeftClicks++;
             else if (button == MouseButtons.Right)
@@ -126,15 +170,31 @@ namespace Recording
         public long Play()
         {
             Stopwatch s = new Stopwatch();
-
+            this.playbackInProgress = true;
             s.Start();
-            foreach (RecordingEvent frame in record.Values)
-            {
-                frame.Execute();
-                System.Threading.Thread.Sleep(this.frameLength);
-            }
-            s.Stop();
 
+            //Start out with no MouseButtons being held down at start.
+            MouseButtons previousMouseButton = MouseButtons.None; 
+
+            foreach (Frame frame in record)
+            {
+
+                //We want the option to abort the playback if needed.
+                if (this.playbackInProgress)
+                {
+                    frame.Execute(previousMouseButton);
+                    System.Threading.Thread.Sleep(this.frameLength);
+                }
+                else
+                { //If someone changed the playBackInProgress to false, abort the playback.
+                    break;  
+                }
+
+                previousMouseButton = frame.EventInRecording.mouseButtonClick;
+            }
+
+            this.playbackInProgress = false;
+            s.Stop();
             return s.ElapsedMilliseconds;
         }
     }

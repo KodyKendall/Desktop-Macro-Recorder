@@ -49,6 +49,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RecordControllerTests.cs" />
     <Compile Include="RecordTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PlayTests.cs" />
@@ -58,13 +59,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ClassLibrary1\RecordPlayer.csproj">
-      <Project>{a3e062b2-1d39-40b6-80d8-ec705ed7e8b5}</Project>
-      <Name>RecordPlayer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MouseToolkit\MouseToolkit.csproj">
       <Project>{d446f0e7-4fa7-496c-b7a3-b58a57c87ee6}</Project>
       <Name>MouseToolkit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RecordingController\RecordingController.csproj">
+      <Project>{73d056e9-33ae-4235-a554-d317d8a900f7}</Project>
+      <Name>RecordingController</Name>
     </ProjectReference>
     <ProjectReference Include="..\Recording\Recording.csproj">
       <Project>{68ec9ff0-e8b5-4e27-9b23-dcb53d1b8453}</Project>

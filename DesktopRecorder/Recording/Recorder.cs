@@ -12,38 +12,35 @@ namespace Recording
 {
     public class Recorder
     {
-        private int recordingLength;
-
-        //This is the essential part of our recording.
         private bool recordingInSession;
-        private int frameLength;
-
+        private int realFrameLength;
+        private const int DEFAULT_FRAME_LENGTH = 15;
         private Record recording;
 
         /// <summary>
         /// Recorder has the capability to record user input and return the record object. 
         /// </summary>
-        public Recorder(int frameLength = 20)
+        public Recorder(int frameLength = DEFAULT_FRAME_LENGTH)
         {
             recordingInSession = false;
-            this.frameLength = frameLength;
+            this.realFrameLength = frameLength;
         }
 
+        /// <summary>
+        /// Start a new recording of user mouse movements. 
+        /// </summary>
         public void StartRecording()
         {
             if (!recordingInSession)
             {
-                this.recording = new Record(this.frameLength, DateTime.Now);
+                this.recording = new Record(this.realFrameLength);
                 this.recordingInSession = true;
                 Thread recordThread = new Thread(() => RecordUserMovement());
                 recordThread.Start();
             }
             else
-            {
-                throw new Exception("You cannot start a new recording when one's in progress.");
-            }
+                throw new RecorderAlreadyRecordingException();
         }
-
 
         private void RecordUserMovement(int frameLength = 20)
         {
@@ -54,16 +51,15 @@ namespace Recording
             }
         }
 
-
-        //Records a single frame
+        /// <summary>
+        /// Records a single 'snapshot' or frame. 
+        /// </summary>
         private void RecordSingleFrame()
         {
-            if (MouseLeftDown())
-            {
-                this.recording.AddFrame(Cursor.Position, MouseButtons.Left);
-            }
-
-            this.recording.AddFrame(Cursor.Position);
+            if (this.recording == null)
+                throw new AddFrameWithoutRecordingStartedException();
+            else
+                this.recording.AddFrame(Cursor.Position, DetermineWhichMouseButtonDown());
         }
 
         /// <summary>
@@ -78,9 +74,7 @@ namespace Recording
                 return this.recording;
             }
             else
-            {
-                throw new Exception("A recording session must have started before you can stop recording.");
-            }
+                throw new RecorderNotRecordingException();
         }
 
         /// <summary>
@@ -93,9 +87,27 @@ namespace Recording
         }
 
         #region Checks for buttons being held down: 
-        private bool MouseLeftDown()
+
+        /// <summary>
+        /// Checks and returns the current MouseButton beind held down by the user. 
+        /// </summary>
+        private MouseButtons DetermineWhichMouseButtonDown()
         {
-            return (Control.MouseButtons == MouseButtons.Left);
+            switch (Control.MouseButtons)
+            {
+                case (MouseButtons.Left):
+                    return MouseButtons.Left;
+                case (MouseButtons.Right):
+                    return MouseButtons.Right;
+                case (MouseButtons.Middle):
+                    return MouseButtons.Middle;
+                case (MouseButtons.XButton1):
+                    return MouseButtons.XButton1;
+                case (MouseButtons.XButton2):
+                    return MouseButtons.XButton2;
+                default:
+                    return MouseButtons.None;
+            }
         }
         #endregion 
     }

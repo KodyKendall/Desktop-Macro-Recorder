@@ -12,9 +12,8 @@ namespace Recording
 {
     public class RecordingEvent
     {
-        private Point mouseLocation;
-        private MouseEventArgs mouseEvent;
-        private MouseButtons? mouseButtonClick = null;
+        public Point mouseLocation;
+        public MouseButtons mouseButtonClick;
 
         public RecordingEvent(Point cursorPosition)
         {
@@ -34,6 +33,12 @@ namespace Recording
         }
 
         /// <summary>
+        /// Here solely for the purpose of xmlSerializer. 
+        /// </summary>
+        private RecordingEvent()
+        { }
+
+        /// <summary>
         /// Get this frame's x,y mouse location.
         /// </summary>
         /// <returns></returns>
@@ -43,16 +48,21 @@ namespace Recording
         }
 
         /// <summary>
-        /// Executes the events
+        /// Executes the Recording Event. 
+        /// How this event is executed depends on the previousMouseButton event.
+        /// If the previousFrameMouseButton was MouseButtons.None, for example, 
+        /// but this recording event's mouseButtonClick was a MouseButtons.left, 
+        /// then you'd have a Left Mouse Press down event. 
+        /// If the opposite were true, then you'd have a Left Mouse Press Up simulation.
+        /// If the Previous was MouseButtons.Left, the this Recording Event was MouseButtons.Left, 
+        /// then there'd be no change (to simulate that the mouse button was continually held down). 
         /// </summary>
-        public void Execute()
+        public void Execute(MouseButtons previousFrameMouseButton)
         {
             //For now, we just need to move the Cursor to it's current location
-            MouseTool mouseTool = new MouseTool();
-
+            MouseTool mouseTool = new MouseTool(); 
             mouseTool.MoveMouseCursor(this.mouseLocation);
-            if (this.mouseButtonClick != null)//If we had a mouse event, we need to simulate it. 
-                mouseTool.SimulateMouseClick((MouseButtons)this.mouseButtonClick);
+            mouseTool.SimulateMouseClick(this.mouseButtonClick, previousFrameMouseButton);
         }
 
         /// <summary>
@@ -67,22 +77,18 @@ namespace Recording
         /// Simulates a mouse event based on this.mouseButtonClick's state. 
         /// If mouseButtonClick is null, no event will happen. 
         /// </summary>
-        private void SimulateMouseClick(MouseButtons? buttonToClick)
+        private void SimulateMouseClick(MouseButtons buttonToClick)
         {
             //Only simulate if this RecordingEvent has a non-null mouseEvent.
             //This should be tracked by the clickEvent boolean. 
-            if (buttonToClick != null) 
+            switch (buttonToClick)
             {
-                switch (buttonToClick)
+                case (MouseButtons.Left):
                 {
-                    case (MouseButtons.Left):
-                    {
-                        DoMouseClick();
-                        break;
-
-                    }
-                    
+                    DoMouseClick();
+                    break;
                 }
+                    
             }
         }
 

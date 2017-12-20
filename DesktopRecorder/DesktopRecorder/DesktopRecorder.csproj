@@ -79,9 +79,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Recording\Recording.csproj">
-      <Project>{68ec9ff0-e8b5-4e27-9b23-dcb53d1b8453}</Project>
-      <Name>Recording</Name>
+    <ProjectReference Include="..\RecordingController\RecordingController.csproj">
+      <Project>{73d056e9-33ae-4235-a554-d317d8a900f7}</Project>
+      <Name>RecordingController</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

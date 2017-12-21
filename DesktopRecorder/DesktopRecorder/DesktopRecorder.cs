@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using RecordingController;
 using System.Threading;
+using System.Diagnostics;
 
 namespace DesktopRecorder
 {
@@ -74,11 +75,44 @@ namespace DesktopRecorder
             this.currentlyRecording = false;
 
             recordTool.StopRecording(); //May get a cross-thread exception.. not sure.. 
+
             MethodInvoker labelUpdateInvoker = new MethodInvoker(UpdateRecordButtonLabel);
             this.Invoke(labelUpdateInvoker);
 
-            //TODO: Save prompt screen for saved recording. 
-            recordTool.SaveRecording(@"c:\users\kody\desktop\testrecording2");
+            string pathToSave = GetSavePathFromUser();
+
+            //If an empty string is returned, user declined to save. 
+            if (pathToSave != "")
+                recordTool.SaveRecording(pathToSave + ".dr"); //Desktop Recording extension .dr
         }
+
+        #region helpers
+
+        /// <summary>
+        /// Gets the user's desired save path for the recording. 
+        /// </summary>
+        private string GetSavePathFromUser()
+        {
+            SaveFileDialog fileSaver = new SaveFileDialog();
+
+            fileSaver.Title = "Save Your Recording";
+            //fileSaver.InitialDirectory = "C:\\Program Files\\Desktop Recorder\\Recordings";
+            fileSaver.ShowDialog();
+
+            string pathToSave = fileSaver.FileName;
+
+            if (pathToSave == "") //If user closed file explorer. 
+            {
+                DialogResult userWantsToSaveRecording = MessageBox.Show("Are you sure you want to delete this recording?", "Save Recording", MessageBoxButtons.YesNo);
+
+                if (userWantsToSaveRecording == DialogResult.No)
+                    return GetSavePathFromUser();
+
+                else if (userWantsToSaveRecording == DialogResult.Yes)
+                     return "";
+            }
+            return pathToSave;
+        }
+        #endregion
     }
 }

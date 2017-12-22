@@ -17,7 +17,6 @@ namespace DesktopRecorder
     public partial class DesktopRecorder : Form
     {
         IKeyboardEvents GlobalHook;
-
         RecordTool recordTool = new RecordTool();
         bool currentlyRecording = false;
         readonly string DEFAULT_FILENAME_LABEL = "Current Recording: ";
@@ -35,9 +34,14 @@ namespace DesktopRecorder
                 StartNewRecording();
         }
 
+        /// <summary>
+        /// Listens for Key Press Events inside and outside the form/window. 
+        /// </summary>
+        /// <param name="o"></param>
+        /// <param name="keyEventArg"></param>
         private void GlobalHookKeyPress(Object o, KeyPressEventArgs keyEventArg)
         {
-            //If they hit the escape key, (char)27, cancel the playback.  
+            //If user hits the escape key, (char)27, cancel the playback.  
             if (keyEventArg.KeyChar == (char)27)
                 CancelPlayback();
         }
@@ -142,6 +146,11 @@ namespace DesktopRecorder
             return pathToSave;
         }
 
+        /// <summary>
+        /// Display the string parameter on the 
+        /// recordingNameLabel without the file ".dr" extension. 
+        /// </summary>
+        /// <param name="recordingName"></param>
         private void UpdateLoadedRecordingLabel(string recordingName)
         {
             //We don't want to display the .dr extension
@@ -155,7 +164,7 @@ namespace DesktopRecorder
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        private string GetFileNameFromPath(string path, bool extensionIncluded)
+        private string GetFileNameFromPath(string path, bool extensionIncluded = false)
         {
             string[] filePathParts = path.Split('\\');
             int lastItemIndex = filePathParts.Length - 1;
@@ -224,6 +233,62 @@ namespace DesktopRecorder
         {
             if (currentlyRecording)
                 EndRecording();
+        }
+
+        private void loadButton_Click(object sender, EventArgs e)
+        {
+            string pathToLoad = null;
+
+            using (OpenFileDialog fileExplorer = new OpenFileDialog())
+            {
+                //fileExplorer.Filter = "Desktop Recording Files (*.dr)";
+                if (fileExplorer.ShowDialog() == DialogResult.OK)
+                    pathToLoad = fileExplorer.FileName;
+            }
+
+            bool pathProperlyLoaded = pathToLoad != null;
+
+            if (pathProperlyLoaded)
+                LoadRecordingToRecordTool(pathToLoad);
+        }
+
+        private void LoadRecordingToRecordTool(string path)
+        {
+            try
+            {
+                this.recordTool.LoadRecording(path);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unreadable file was selected by user.");
+                Console.WriteLine(e.Message);
+                HandleInvalidFileLoaded(GetFileNameFromPath(path, true));
+                return;
+            }
+
+            //Update the file name label if file loaded properly.
+            string fileNameWithoutFullPath = GetFileNameFromPath(path);
+            UpdateLoadedRecordingLabel(fileNameWithoutFullPath);
+        }
+
+        private void HandleInvalidFileLoaded(string fileName)
+        {
+            DialogResult loadNewFile 
+                = MessageBox.Show
+                ("The selected file was unreadable. (Are you selecting a "
+                + "file with a \".dr\" extension type?) Do you want to try a "
+                + "different file?"
+                , "Unreadable File"
+                , MessageBoxButtons.YesNo);
+
+            if (loadNewFile == DialogResult.Yes)
+            {
+                //Try to load file again. 
+                //This method doesn't use the object or event args, so they can be null.
+                loadButton_Click(null, null);
+            }
+            else
+                return;
         }
     }
 }

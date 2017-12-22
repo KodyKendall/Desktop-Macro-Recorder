@@ -136,7 +136,16 @@ namespace RecordingController
             using (var streamReader = new StreamReader(fileName))
             {
                 XmlSerializer deserializer = new XmlSerializer(typeof(Record));
-                this.record = (Record)deserializer.Deserialize(streamReader);
+                try
+                {
+                    this.record = (Record)deserializer.Deserialize(streamReader);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("There was a problem reading the loaded .dr file");
+                    Console.WriteLine(e.Message);
+                    throw new InvalidDataException("There was an incorrect file type loaded in Recordtool.LoadRecording!");
+                }
             }
         }
         

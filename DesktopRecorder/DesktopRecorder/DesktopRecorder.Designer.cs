@@ -32,6 +32,7 @@
             this.playButton = new System.Windows.Forms.Button();
             this.recordingNameLabel = new System.Windows.Forms.Label();
             this.endRecordingButton = new System.Windows.Forms.Button();
+            this.loadButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // recordButton
@@ -46,7 +47,7 @@
             // 
             // playButton
             // 
-            this.playButton.Location = new System.Drawing.Point(80, 266);
+            this.playButton.Location = new System.Drawing.Point(80, 267);
             this.playButton.Name = "playButton";
             this.playButton.Size = new System.Drawing.Size(484, 94);
             this.playButton.TabIndex = 1;
@@ -74,11 +75,22 @@
             this.endRecordingButton.UseVisualStyleBackColor = true;
             this.endRecordingButton.Click += new System.EventHandler(this.endRecordingButton_Click);
             // 
+            // loadButton
+            // 
+            this.loadButton.Location = new System.Drawing.Point(80, 383);
+            this.loadButton.Name = "loadButton";
+            this.loadButton.Size = new System.Drawing.Size(484, 94);
+            this.loadButton.TabIndex = 4;
+            this.loadButton.Text = "Load Recording";
+            this.loadButton.UseVisualStyleBackColor = true;
+            this.loadButton.Click += new System.EventHandler(this.loadButton_Click);
+            // 
             // DesktopRecorder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(22F, 42F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1316, 872);
+            this.Controls.Add(this.loadButton);
             this.Controls.Add(this.endRecordingButton);
             this.Controls.Add(this.recordingNameLabel);
             this.Controls.Add(this.playButton);
@@ -96,6 +108,7 @@
         private System.Windows.Forms.Button playButton;
         private System.Windows.Forms.Label recordingNameLabel;
         private System.Windows.Forms.Button endRecordingButton;
+        private System.Windows.Forms.Button loadButton;
     }
 }
 

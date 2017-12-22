@@ -13,6 +13,7 @@ namespace RecordingController
     {
         Recorder recorder;
         Record record;
+        string name;
 
         /// <summary>
         /// Returns the length of the stored recording.
@@ -25,6 +26,24 @@ namespace RecordingController
                 if (this.record != null)
                     return record.SecondsLong();
                 else return 0.0;
+            }
+        }
+
+        /// <summary>
+        /// The file name of this recording.
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                if (record == null)
+                    return "No File Name";
+                else
+                    return this.name;
+            }
+            set
+            {
+                this.name = value;
             }
         }
 

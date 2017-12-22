@@ -17,6 +17,7 @@ namespace DesktopRecorder
     {
         RecordTool recordTool = new RecordTool();
         bool currentlyRecording = false;
+        string DEFAULT_FILENAME_LABEL = "Current Recording: ";
 
         public DesktopRecorder()
         {
@@ -26,14 +27,9 @@ namespace DesktopRecorder
         private void recordButton_Click(object sender, EventArgs e)
         {
             if (!currentlyRecording)
-            {
                 StartNewRecording();
-
-            }
             else
-            {
                 EndRecording();
-            }
         }
 
         /// <summary>
@@ -83,7 +79,11 @@ namespace DesktopRecorder
 
             //If an empty string is returned, user declined to save. 
             if (pathToSave != "")
+            {
                 recordTool.SaveRecording(pathToSave + ".dr"); //Desktop Recording extension .dr
+                string fileName = GetFileNameFromPath(pathToSave, false);
+                UpdateLoadedRecordingLabel(fileName);
+            }
         }
 
         #region helpers
@@ -103,7 +103,10 @@ namespace DesktopRecorder
 
             if (pathToSave == "") //If user closed file explorer. 
             {
-                DialogResult userWantsToSaveRecording = MessageBox.Show("Are you sure you want to delete this recording?", "Save Recording", MessageBoxButtons.YesNo);
+                DialogResult userWantsToSaveRecording = 
+                    MessageBox.Show("Are you sure you want to delete this recording?"
+                    , "Save Recording"
+                    , MessageBoxButtons.YesNo);
 
                 if (userWantsToSaveRecording == DialogResult.No)
                     return GetSavePathFromUser();
@@ -113,6 +116,36 @@ namespace DesktopRecorder
             }
             return pathToSave;
         }
+
+        private void UpdateLoadedRecordingLabel(string recordingName)
+        {
+            this.recordingNameLabel.Text = DEFAULT_FILENAME_LABEL + recordingName;
+        }
+
+        /// <summary>
+        /// Given a file path as a string, return the name after 
+        /// the backslash without the extension. 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private string GetFileNameFromPath(string path, bool extensionIncluded)
+        {
+            string[] filePathParts = path.Split('\\');
+            int lastItemIndex = filePathParts.Length - 1;
+            string fileNameWithExtension = filePathParts[lastItemIndex];
+
+            if (extensionIncluded)
+                return fileNameWithExtension;
+            else
+            {
+                //We want to strip out the last part of the name (part with extension)
+                filePathParts = fileNameWithExtension.Split('.');
+                //First element should be the file name we want without the extension
+                string fileNameWithoutExtension = filePathParts[0];
+                return fileNameWithExtension;
+            }
+        }
+        
         #endregion
     }
 }

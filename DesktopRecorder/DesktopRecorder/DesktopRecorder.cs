@@ -26,23 +26,42 @@ namespace DesktopRecorder
 
         private void recordButton_Click(object sender, EventArgs e)
         {
-            if (!currentlyRecording)
+            if (!currentlyRecording) //and not in playback mode..
                 StartNewRecording();
-            else
-                EndRecording();
         }
 
         /// <summary>
-        /// Updates the Record Button Label to "Record" if 
-        /// user isn't currently recording, or "Stop Recording"
+        /// Enables the Record Button if
+        /// user isn't currently recording, or disables
         /// if user currently is recording.
         /// </summary>
         private void UpdateRecordButtonLabel()
         {
-            if (!currentlyRecording)
-                this.recordButton.Text = "Record";
+            if (currentlyRecording)
+            {
+                this.endRecordingButton.Enabled = true;
+                this.recordButton.Enabled = false;
+                this.recordButton.Text = "Recording";
+            }
             else
-                this.recordButton.Text = "Stop Recording";
+            {
+                this.endRecordingButton.Enabled = false;
+                this.recordButton.Enabled = true;
+                this.recordButton.Text = "Record";
+            }
+        }
+        
+        /// <summary>
+        /// Disables the Stop Button if
+        /// user isn't currently recording, or enables
+        /// if user currently is recording.
+        /// </summary>
+        private void ToggleEnabledStopButton()
+        {
+            if (currentlyRecording)
+                this.endRecordingButton.Enabled = true;
+            else
+                this.endRecordingButton.Enabled = false;
         }
 
         /// <summary>
@@ -71,7 +90,6 @@ namespace DesktopRecorder
             this.currentlyRecording = false;
 
             recordTool.StopRecording(); //May get a cross-thread exception.. not sure.. 
-
             MethodInvoker labelUpdateInvoker = new MethodInvoker(UpdateRecordButtonLabel);
             this.Invoke(labelUpdateInvoker);
 
@@ -183,7 +201,26 @@ namespace DesktopRecorder
             else
                 return fileName;
         }
-        
+
         #endregion
+
+        private void playButton_Click(object sender, EventArgs e)
+        {
+            if (recordTool != null)
+            {
+                recordTool.Play();
+            }
+        }
+
+        private void CancelPlayback()
+        {
+
+        }
+
+        private void endRecordingButton_Click(object sender, EventArgs e)
+        {
+            if (currentlyRecording)
+                EndRecording();
+        }
     }
 }

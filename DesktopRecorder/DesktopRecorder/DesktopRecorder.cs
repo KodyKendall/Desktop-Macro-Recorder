@@ -10,17 +10,22 @@ using System.Windows.Forms;
 using RecordingController;
 using System.Threading;
 using System.Diagnostics;
+using Gma.System.MouseKeyHook;
 
 namespace DesktopRecorder
 {
     public partial class DesktopRecorder : Form
     {
+        IKeyboardEvents GlobalHook;
+
         RecordTool recordTool = new RecordTool();
         bool currentlyRecording = false;
         readonly string DEFAULT_FILENAME_LABEL = "Current Recording: ";
 
         public DesktopRecorder()
         {
+            GlobalHook = Hook.GlobalEvents();
+            GlobalHook.KeyPress += GlobalHookKeyPress;
             InitializeComponent();
         }
 
@@ -30,12 +35,19 @@ namespace DesktopRecorder
                 StartNewRecording();
         }
 
+        private void GlobalHookKeyPress(Object o, KeyPressEventArgs keyEventArg)
+        {
+            //If they hit the escape key, (char)27, cancel the playback.  
+            if (keyEventArg.KeyChar == (char)27)
+                CancelPlayback();
+        }
+
         /// <summary>
-        /// Enables the Record Button if
-        /// user isn't currently recording, or disables
-        /// if user currently is recording.
+        /// Enables the Record Button and Disables the Stop button if
+        /// user isn't currently recording, or Disables the Record button
+        /// and Enables the Stop button if user currently is recording.
         /// </summary>
-        private void UpdateRecordButtonLabel()
+        private void UpdateRecordStopButtons()
         {
             if (currentlyRecording)
             {
@@ -52,19 +64,6 @@ namespace DesktopRecorder
         }
         
         /// <summary>
-        /// Disables the Stop Button if
-        /// user isn't currently recording, or enables
-        /// if user currently is recording.
-        /// </summary>
-        private void ToggleEnabledStopButton()
-        {
-            if (currentlyRecording)
-                this.endRecordingButton.Enabled = true;
-            else
-                this.endRecordingButton.Enabled = false;
-        }
-
-        /// <summary>
         /// Handles all the logic for stuff that needs to happen when 
         /// starting a new recording on the windows form. 
         /// </summary>
@@ -77,7 +76,7 @@ namespace DesktopRecorder
             recordThread.Start();
 
             //We want to make sure to call this AFTER this.currentlyRecording = true. 
-            MethodInvoker labelUpdateInvoker = new MethodInvoker(UpdateRecordButtonLabel);
+            MethodInvoker labelUpdateInvoker = new MethodInvoker(UpdateRecordStopButtons);
             this.Invoke(labelUpdateInvoker);
         }
 
@@ -90,7 +89,7 @@ namespace DesktopRecorder
             this.currentlyRecording = false;
 
             recordTool.StopRecording(); //May get a cross-thread exception.. not sure.. 
-            MethodInvoker labelUpdateInvoker = new MethodInvoker(UpdateRecordButtonLabel);
+            MethodInvoker labelUpdateInvoker = new MethodInvoker(UpdateRecordStopButtons);
             this.Invoke(labelUpdateInvoker);
 
             string pathToSave = GetSavePathFromUser();
@@ -208,13 +207,17 @@ namespace DesktopRecorder
         {
             if (recordTool != null)
             {
-                recordTool.Play();
+                Thread playbackThread = new Thread(recordTool.Play);
+                playbackThread.Start();
             }
         }
 
+        /// <summary>
+        /// Cancels the playback currently in action
+        /// </summary>
         private void CancelPlayback()
         {
-
+            this.recordTool.CancelPlayback();
         }
 
         private void endRecordingButton_Click(object sender, EventArgs e)

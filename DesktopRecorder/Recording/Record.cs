@@ -166,11 +166,12 @@ namespace Recording
         /// <summary>
         /// Play back the recorded user events
         /// </summary>
-        /// <returns>The milliseconds of the record</returns>
+        /// <returns>The milliseconds of the record's playbac</returns>
         public long Play()
         {
             Stopwatch s = new Stopwatch();
             this.playbackInProgress = true;
+            Console.WriteLine("Starting to play the recorded user input");
             s.Start();
 
             //Start out with no MouseButtons being held down at start.
@@ -186,7 +187,9 @@ namespace Recording
                     System.Threading.Thread.Sleep(this.frameLength);
                 }
                 else
-                { //If someone changed the playBackInProgress to false, abort the playback.
+                {
+                    Console.WriteLine("PlaybackInProgres got changed to false");
+                    Console.WriteLine("Aborting playback..");
                     break;  
                 }
 

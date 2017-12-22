@@ -17,7 +17,7 @@ namespace DesktopRecorder
     {
         RecordTool recordTool = new RecordTool();
         bool currentlyRecording = false;
-        string DEFAULT_FILENAME_LABEL = "Current Recording: ";
+        readonly string DEFAULT_FILENAME_LABEL = "Current Recording: ";
 
         public DesktopRecorder()
         {
@@ -80,7 +80,15 @@ namespace DesktopRecorder
             //If an empty string is returned, user declined to save. 
             if (pathToSave != "")
             {
-                recordTool.SaveRecording(pathToSave + ".dr"); //Desktop Recording extension .dr
+                bool extensionAlreadyInPath = HasDrExtension(pathToSave);
+
+                if (extensionAlreadyInPath)
+                    //If the path already has the extension at the end, don't include it.
+                    recordTool.SaveRecording(pathToSave); 
+                else
+                    //Desktop Recording file extension = .dr
+                    recordTool.SaveRecording(pathToSave + ".dr"); 
+
                 string fileName = GetFileNameFromPath(pathToSave, false);
                 UpdateLoadedRecordingLabel(fileName);
             }
@@ -104,7 +112,7 @@ namespace DesktopRecorder
             if (pathToSave == "") //If user closed file explorer. 
             {
                 DialogResult userWantsToSaveRecording = 
-                    MessageBox.Show("Are you sure you want to delete this recording?"
+                    MessageBox.Show("Are you sure you don't want to save this recording?"
                     , "Save Recording"
                     , MessageBoxButtons.YesNo);
 
@@ -119,7 +127,9 @@ namespace DesktopRecorder
 
         private void UpdateLoadedRecordingLabel(string recordingName)
         {
-            this.recordingNameLabel.Text = DEFAULT_FILENAME_LABEL + recordingName;
+            //We don't want to display the .dr extension
+            string nameToDisplay = StripDrFileExtension(recordingName);
+            this.recordingNameLabel.Text = this.DEFAULT_FILENAME_LABEL + nameToDisplay;
         }
 
         /// <summary>
@@ -140,10 +150,38 @@ namespace DesktopRecorder
             {
                 //We want to strip out the last part of the name (part with extension)
                 filePathParts = fileNameWithExtension.Split('.');
+
                 //First element should be the file name we want without the extension
                 string fileNameWithoutExtension = filePathParts[0];
                 return fileNameWithExtension;
             }
+        }
+
+        /// <summary>
+        /// Checks if the string ends with ".dr" 
+        /// (Not Caps Sensitive)
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        private bool HasDrExtension(string fileName)
+        {
+            return fileName.ToLower().Substring(fileName.Length - 3) == ".dr";
+        }
+
+        /// <summary>
+        /// If the given string ends in a ".dr" extension, return the string 
+        /// with ".dr" removed from the end. 
+        /// 
+        /// If it doesn't end in a ".dr" extension, the string remains unchanged.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        private string StripDrFileExtension(string fileName)
+        {
+            if (HasDrExtension(fileName))
+                return fileName.Substring(0, fileName.Length - 3);
+            else
+                return fileName;
         }
         
         #endregion
